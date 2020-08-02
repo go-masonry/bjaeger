@@ -1,4 +1,4 @@
-module github.com/go-masonry/bricks/tracing/bjaeger
+module github.com/go-masonry/bjaeger
 
 go 1.14
 
