@@ -29,7 +29,7 @@ func (w *tracerWrapper) Connect(ctx context.Context) error {
 	w.Lock()
 	defer w.Unlock()
 	if !w.connected {
-		var connectionErrorChannel = make(chan error)
+		var connectionErrorChannel = make(chan error, 1)
 		go func() {
 			tracer, closer, err := w.cfg.conf.NewTracer(w.cfg.options...)
 			if err == nil {
