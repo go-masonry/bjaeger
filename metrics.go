@@ -1,7 +1,6 @@
 package bjaeger
 
 import (
-	"context"
 	"time"
 
 	"github.com/go-masonry/mortar/interfaces/monitor"
@@ -39,9 +38,9 @@ func (m *metricsWrapper) Histogram(options metrics.HistogramOptions) metrics.His
 
 func (m *metricsWrapper) Namespace(scope metrics.NSOptions) metrics.Factory {
 	// Best effort here
-	newMetric := m.metrics.AddTag("namespace", scope.Name)
-	for name, value := range scope.Tags {
-		newMetric = newMetric.AddTag(name, value)
+	newMetric := m.metrics.WithTags(monitor.Tags{"namespace": scope.Name})
+	if len(scope.Tags) > 0 {
+		newMetric = newMetric.WithTags(scope.Tags)
 	}
 	return &metricsWrapper{
 		metrics: newMetric,
@@ -54,11 +53,8 @@ type counterImpl struct {
 }
 
 func (ci *counterImpl) Inc(i int64) {
-	metric := ci.metrics
-	for name, value := range ci.Tags {
-		metric = metric.AddTag(name, value)
-	}
-	metric.Count(context.Background(), ci.Name, i)
+	metric := ci.metrics.WithTags(ci.Tags)
+	metric.Counter(ci.Name, "").Add(float64(i))
 }
 
 type timerImpl struct {
@@ -67,11 +63,8 @@ type timerImpl struct {
 }
 
 func (ti *timerImpl) Record(d time.Duration) {
-	metric := ti.metrics
-	for name, value := range ti.Tags {
-		metric = metric.AddTag(name, value)
-	}
-	metric.Timing(context.Background(), ti.Name, d)
+	metric := ti.metrics.WithTags(ti.Tags)
+	metric.Timer(ti.Name, "").Record(d)
 }
 
 type gaugeImpl struct {
@@ -80,11 +73,8 @@ type gaugeImpl struct {
 }
 
 func (gi *gaugeImpl) Update(i int64) {
-	metric := gi.metrics
-	for name, value := range gi.Tags {
-		metric = metric.AddTag(name, value)
-	}
-	metric.Gauge(context.Background(), gi.Name, float64(i))
+	metric := gi.metrics.WithTags(gi.Tags)
+	metric.Gauge(gi.Name, "").Set(float64(i))
 }
 
 type histogramImpl struct {
@@ -93,9 +83,6 @@ type histogramImpl struct {
 }
 
 func (hi *histogramImpl) Record(f float64) {
-	metric := hi.metrics
-	for name, value := range hi.Tags {
-		metric = metric.AddTag(name, value)
-	}
-	metric.Histogram(context.Background(), hi.Name, f)
+	metric := hi.metrics.WithTags(hi.Tags)
+	metric.Histogram(hi.Name, "", hi.HistogramOptions.Buckets).Record(f)
 }
