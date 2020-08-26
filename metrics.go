@@ -8,6 +8,7 @@ import (
 	"github.com/uber/jaeger-lib/metrics"
 )
 
+// BricksMetricsOption can be added to enable jaeger client telemetry using mortar monitor
 func BricksMetricsOption(bricksMetrics monitor.Metrics) (opt config.Option) {
 	if bricksMetrics != nil {
 		factory := &metricsWrapper{metrics: bricksMetrics}

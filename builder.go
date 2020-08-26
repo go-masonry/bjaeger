@@ -7,6 +7,7 @@ import (
 	"github.com/uber/jaeger-client-go/config"
 )
 
+// JaegerBuilder is a builder that will help you configure jaeger
 type JaegerBuilder interface {
 	SetServiceName(name string) JaegerBuilder
 	AddOptions(options ...config.Option) JaegerBuilder
@@ -24,6 +25,7 @@ type jaegerBuilder struct {
 	ll *list.List
 }
 
+// Builder start building Jaeger instance
 func Builder() JaegerBuilder {
 	return &jaegerBuilder{
 		ll: list.New(),

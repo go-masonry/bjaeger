@@ -7,6 +7,7 @@ import (
 	"github.com/uber/jaeger-client-go/config"
 )
 
+// BricksLoggerOption can be added to enable jaeger client debug using mortar logger
 func BricksLoggerOption(bricksLogger log.Logger) config.Option {
 	if bricksLogger == nil {
 		return func(*config.Options) {} // empty option
