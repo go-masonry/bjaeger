@@ -37,15 +37,19 @@ func TraceInfoContextExtractorFxOption() fx.Option {
 func TraceInfoExtractorFromContext(ctx context.Context) map[string]interface{} {
 	if span := opentracing.SpanFromContext(ctx); span != nil {
 		if jaegerContext, ok := span.Context().(jaeger.SpanContext); ok {
-			var output = make(map[string]interface{}, 4)
-			output[SpanIDKey] = jaegerContext.SpanID().String()
-			output[ParentSpanIDKey] = jaegerContext.ParentID().String()
-			output[SampledKey] = jaegerContext.IsSampled()
-			if traceID := jaegerContext.TraceID(); traceID.IsValid() {
-				output[TraceIDKey] = traceID.String()
-			}
-			return output
+			return extractFromSpanContext(jaegerContext)
 		}
 	}
 	return nil
+}
+
+func extractFromSpanContext(ctx jaeger.SpanContext) map[string]interface{} {
+	var output = make(map[string]interface{}, 4)
+	output[SpanIDKey] = ctx.SpanID().String()
+	output[ParentSpanIDKey] = ctx.ParentID().String()
+	output[SampledKey] = ctx.IsSampled()
+	if traceID := ctx.TraceID(); traceID.IsValid() {
+		output[TraceIDKey] = traceID.String()
+	}
+	return output
 }

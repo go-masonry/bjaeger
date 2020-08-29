@@ -22,7 +22,7 @@ cover-report:
 
 test:
 	@echo "Testing ..."
-	@go test -coverprofile=coverage.out -failfast ./...
+	@go test -count=1 -coverprofile=coverage.out -failfast ./...
 
 test-with-report: test cover-report
 
