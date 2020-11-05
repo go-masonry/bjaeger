@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
-	github.com/go-masonry/mortar v0.1.2
+	github.com/go-masonry/mortar v0.1.3
 	github.com/golang/mock v1.4.4
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect
